@@ -1,46 +1,214 @@
-# Getting Started with Create React App
+# Shoutbox Email Sender
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to the Shoutbox Email Sender repository! This project is designed to help developers easily send transactional emails using the Shoutbox API, leveraging the power of Node.js, TypeScript, and React.
 
-## Available Scripts
+## What is Shoutbox?
 
-In the project directory, you can run:
+Shoutbox is a developer-first email transactional API that allows you to send and manage emails programmatically. With Shoutbox, you can easily integrate email functionality into your applications.
 
-### `npm start`
+## Getting Started
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Prerequisites
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Before you begin, ensure you have the following installed on your machine:
 
-### `npm test`
+- Node.js
+- npm, yarn, or pnpm
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Installation
 
-### `npm run build`
+1. **Clone the repository:**
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+   ```sh
+   git clone https://github.com/shoutboxnet/react-email-demo.git
+   cd react-email-demo
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. **Install dependencies:**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   Using npm:
+   ```sh
+   npm install
+   ```
 
-### `npm run eject`
+   Using yarn:
+   ```sh
+   yarn install
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+   Using pnpm:
+   ```sh
+   pnpm install
+   ```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Sending an Email
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+To send an email using Shoutbox, run the following command with your Shoutbox API key:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```sh
+SHOUTBOX_API_KEY=MY_API_KEY npx tsx src/SendEmail.tsx
+```
 
-## Learn More
+Replace `MY_API_KEY` with your actual Shoutbox API key.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## How It Works
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+This repository contains a simple example of how to send an email using Shoutbox and React components.
+
+### Directory Structure
+
+```
+src/
+│
+├── Email.tsx
+└── SendEmail.tsx
+```
+
+### Code Explanation
+
+#### src/SendEmail.tsx
+
+This file contains the main logic for sending an email.
+
+```typescript
+import * as React from "react";
+import Email from "./Email";
+import Shoutbox from "shoutboxnet";
+
+const sendEmail = async () => {
+  const shoutbox = new Shoutbox();
+
+  await shoutbox.sendEmail({
+    from: "no-reply@shoutbox.net",
+    to: "test@example.com",
+    subject: "A question about the meetup",
+    react: <Email url="https://example.com" />,
+  });
+};
+
+export default sendEmail;
+
+(async()=> {
+  await sendEmail();  
+})();
+```
+
+This script initializes the Shoutbox client and sends an email with the specified parameters. The email content is defined using a React component (`Email`).
+
+#### src/Email.tsx
+
+This file defines the React component for the email content.
+
+```typescript
+import * as React from "react";
+import { Html } from "@react-email/html";
+import { Button } from "@react-email/button";
+
+interface EmailProps {
+  url: string;
+}
+
+const Email: React.FC<EmailProps> = ({ url }) => {
+  return (
+    <Html lang="en">
+      <Button href={url}>Click me</Button>
+    </Html>
+  );
+};
+
+export default Email;
+```
+
+This component uses the `@react-email/html` and `@react-email/button` packages to create a simple email with a button.
+
+## Integrating Into Your Own Project
+
+To integrate this functionality into your own project, follow these steps:
+
+1. **Install Shoutbox and React Email packages:**
+
+   Using npm:
+   ```sh
+   npm install shoutboxnet @react-email/html @react-email/button
+   ```
+
+   Using yarn:
+   ```sh
+   yarn add shoutboxnet @react-email/html @react-email/button
+   ```
+
+   Using pnpm:
+   ```sh
+   pnpm add shoutboxnet @react-email/html @react-email/button
+   ```
+
+2. **Create a React component for your email content:**
+
+   ```typescript
+   // src/MyEmail.tsx
+   import * as React from "react";
+   import { Html } from "@react-email/html";
+   import { Button } from "@react-email/button";
+
+   interface MyEmailProps {
+     url: string;
+   }
+
+   const MyEmail: React.FC<MyEmailProps> = ({ url }) => {
+     return (
+       <Html lang="en">
+         <Button href={url}>Click me</Button>
+       </Html>
+     );
+   };
+
+   export default MyEmail;
+   ```
+
+3. **Create a script to send the email:**
+
+   ```typescript
+   // src/SendMyEmail.tsx
+   import * as React from "react";
+   import MyEmail from "./MyEmail";
+   import Shoutbox from "shoutboxnet";
+
+   const sendMyEmail = async () => {
+     const shoutbox = new Shoutbox();
+
+     await shoutbox.sendEmail({
+       from: "no-reply@yourdomain.com",
+       to: "recipient@example.com",
+       subject: "Your Subject Here",
+       react: <MyEmail url="https://example.com" />,
+     });
+   };
+
+   export default sendMyEmail;
+
+   (async()=> {
+     await sendMyEmail();  
+   })();
+   ```
+
+4. **Run your email script:**
+
+   ```sh
+   SHOUTBOX_API_KEY=MY_API_KEY npx tsx src/SendMyEmail.tsx
+   ```
+
+   or integrate it in your React project. Note that this cannot work on the client side, only SSR / server. 
+
+Replace the placeholder values with your actual data, and you're ready to send emails using Shoutbox in your project!
+
+## Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request for any changes.
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for more details.
+
+---
+
+Thank you for using Shoutbox Email Sender! If you have any questions or need further assistance, feel free to reach out.
